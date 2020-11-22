@@ -11,7 +11,7 @@ body {
   background: black;
 }
 body.running  {
-  cursor:pointer;
+  cursor:none;
 }
 body.running #setup {
   display: none;
