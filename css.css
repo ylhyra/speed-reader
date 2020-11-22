@@ -7,13 +7,14 @@ body {
   background: #fffced;
   background: #fac58e;
   font-family: Georgia;
-
   color: white;
   background: black;
 }
-body.running  {
-  cursor:none;
+
+body.running {
+  cursor: none;
 }
+
 body.running #setup {
   display: none;
 }
@@ -21,6 +22,7 @@ body.running #setup {
 textarea {
   width: 100%;
   height: 200px;
+  font-family: sans-serif;
 }
 
 #output {
@@ -31,16 +33,40 @@ textarea {
   padding: 5px 10px;
   max-width: 400px;
   min-width: 400px;
-
-  color:#ffef5b;
+  color: #ffef5b;
 }
 
 #status {
-  color: white;
   background: #b9dbf6;
   height: 2px;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+body[data-skin=blackonwhite] {
+  background: white;
+  color: black;
+}
+
+body[data-skin=blackonwhite] #output {
+  color: black;
+}
+
+body[data-skin=blackoncream] {
+  background: #fffced;
+  color: black;
+}
+
+body[data-skin=blackoncream] #output {
+  color: black;
+}
+
+body[data-skin=whiteonblack] {
+  background: black;
+}
+
+body[data-skin=whiteonblack] #output {
+  color: white;
 }

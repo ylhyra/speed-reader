@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title></title>
+  <title>Speed reader</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <body>
   <main>
     <div id=setup>
-      <textarea id=textarea></textarea>
+      <textarea id=textarea placeholder="Write text..."></textarea>
       <div>
         <button id="start">Start</button>
         <button id="reset">Restart</button>
@@ -34,6 +34,15 @@
           <option value="500">500 wpm</option>
           <option value="550">550 wpm</option>
           <option value="600">600 wpm</option>
+        </select>
+      </div>
+      <div>
+        <label for="skin">Colors:</label>
+        <select id=skin>
+          <option value="blackonwhite">Black on white</option>
+          <option value="blackoncream">Black on cream</option>
+          <option value="whiteonblack">White on black</option>
+          <option value="yellowonblack" selected>Yellow on black</option>
         </select>
       </div>
     </div>

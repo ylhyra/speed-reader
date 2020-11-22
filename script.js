@@ -1,6 +1,7 @@
 const startButton = document.getElementById('start')
 const resetButton = document.getElementById('reset')
 const speedOption = document.getElementById('wpm')
+const skinOption = document.getElementById('skin')
 const textarea = document.getElementById('textarea')
 const output = document.getElementById('output')
 const status = document.getElementById('status')
@@ -17,7 +18,7 @@ let STARTS = /^[-–—«»"“”]/
 let running = false
 const PARAGRAPH_BREAK = 'PARAGRAPH_BREAK'
 const SENTENCE_BREAK = 'SENTENCE_BREAK'
-
+let skin = 'yellowonblack'
 
 const saveText = () => {
   localStorage.setItem("text", textarea.value)
@@ -26,6 +27,7 @@ const saveText = () => {
 const saveSettings = () => {
   localStorage.setItem("cur", cur)
   localStorage.setItem("wpm", wpm)
+  localStorage.setItem("skin", skin)
   render()
 }
 const loadSettings = () => {
@@ -35,6 +37,9 @@ const loadSettings = () => {
   }
   if (localStorage.getItem("wpm")) {
     wpm = parseInt(localStorage.getItem("wpm"))
+  }
+  if (localStorage.getItem("skin")) {
+    skin = localStorage.getItem("skin")
   }
   loadText()
   render()
@@ -48,6 +53,8 @@ const render = () => {
     startButton.innerHTML = 'Start'
   }
   speedOption.value = wpm
+  skinOption.value = skin
+  document.body.setAttribute('data-skin',skin)
 }
 
 textarea.addEventListener('click', (e) => {
@@ -63,6 +70,11 @@ resetButton.addEventListener('click', (e) => {
   e.stopPropagation();
   reset()
   start()
+})
+
+skinOption.addEventListener('change', (e) => {
+  skin = skinOption.value
+  saveSettings()
 })
 
 speedOption.addEventListener('click', (e) => {
