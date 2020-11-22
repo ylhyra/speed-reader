@@ -8,6 +8,7 @@ let words = [];
 let cur = 0;
 // let wpm = 300;
 let wpm = 170;
+wpm = 260;
 let average_word_length = 6;
 let MAJOR_BREAK = /[.!?"“”]$/
 let MINOR_BREAK = /[,;:]$/
@@ -15,6 +16,7 @@ let ENDS = /[.!?"“”,;:«»]$/
 let STARTS = /^[-–—«»"“”]/
 let running = false
 const PARAGRAPH_BREAK = 'PARAGRAPH_BREAK'
+const SENTENCE_BREAK = 'SENTENCE_BREAK'
 
 
 const saveText = () => {
@@ -68,6 +70,8 @@ const reset = () => {
 const start = () => {
   words = textarea.value
     .split(/\n\n+/g).filter(Boolean).join(' ' + PARAGRAPH_BREAK + ' ')
+    .replace(/([.!?"“”]) /g, '$1 ' + SENTENCE_BREAK + ' ')
+    .replace(/SENTENCE_BREAK PARAGRAPH_BREAK/g, 'PARAGRAPH_BREAK')
     .split(/\s+/g).filter(Boolean)
   if (cur >= words.length) {
     reset()
@@ -92,14 +96,14 @@ const timeoutAndNext = (multiplier, add) => {
 }
 
 const next = () => {
-  if (!document.hasFocus() ||cur >= words.length) {
+  if (!document.hasFocus() || cur >= words.length) {
     return stop()
   }
   let word = words[cur]
-  if (word !== PARAGRAPH_BREAK) {
+  if (word !== PARAGRAPH_BREAK && word !== SENTENCE_BREAK) {
     for (let i = 1; word.length < 9 && cur + i < words.length; i++) {
       let word_to_add = words[cur + i]
-      if (word_to_add === PARAGRAPH_BREAK) {
+      if (word_to_add === PARAGRAPH_BREAK || word_to_add === SENTENCE_BREAK) {
         break;
       }
       if (word_to_add === undefined || word.length + word_to_add.length > 8 || ENDS.test(word) || STARTS.test(word_to_add)) {
@@ -118,9 +122,14 @@ const next = () => {
   if (word === PARAGRAPH_BREAK) {
     word = ''
     multiplier = 2
-  } else if (MAJOR_BREAK.test(word) && words[cur +1]!==PARAGRAPH_BREAK) {
-    multiplier = 2
-  } else if (MINOR_BREAK.test(word)) {
+  } else if (word === SENTENCE_BREAK) {
+    word = ''
+    multiplier = 0.7
+  }
+  // else if (MAJOR_BREAK.test(word) && words[cur + 1] !== PARAGRAPH_BREAK) {
+  //   multiplier = 2
+  // }
+  else if (MINOR_BREAK.test(word)) {
     multiplier = 1.4
   }
   output.innerHTML = '&nbsp;'.repeat(Math.max(0, (word.length - 4) / 0.8)) + word
