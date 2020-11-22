@@ -8,6 +8,7 @@ body {
   background: #fac58e;
   font-family: Georgia;
 
+  color: white;
   background: black;
 }
 body.running  {
@@ -15,6 +16,11 @@ body.running  {
 }
 body.running #setup {
   display: none;
+}
+
+textarea {
+  width: 100%;
+  height: 200px;
 }
 
 #output {

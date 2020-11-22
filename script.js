@@ -1,5 +1,6 @@
 const startButton = document.getElementById('start')
 const resetButton = document.getElementById('reset')
+const speedOption = document.getElementById('wpm')
 const textarea = document.getElementById('textarea')
 const output = document.getElementById('output')
 const status = document.getElementById('status')
@@ -7,8 +8,7 @@ let timer;
 let words = [];
 let cur = 0;
 // let wpm = 300;
-let wpm = 170;
-wpm = 260;
+let wpm = 200;
 let average_word_length = 6;
 let MAJOR_BREAK = /[.!?"“”]$/
 let MINOR_BREAK = /[,;:]$/
@@ -25,6 +25,7 @@ const saveText = () => {
 }
 const saveSettings = () => {
   localStorage.setItem("cur", cur)
+  localStorage.setItem("wpm", wpm)
   render()
 }
 const loadSettings = () => {
@@ -32,12 +33,21 @@ const loadSettings = () => {
   if (localStorage.getItem("cur")) {
     cur = parseInt(localStorage.getItem("cur"))
   }
+  if (localStorage.getItem("wpm")) {
+    wpm = parseInt(localStorage.getItem("wpm"))
+  }
+  loadText()
   render()
 }
 const render = () => {
   if (words.length > 0) {
     status.style.width = `${(cur/words.length*100)}%`
+    startButton.innerHTML = `Continue (${Math.floor(cur/words.length*100)}%)`
   }
+  if (cur == 0) {
+    startButton.innerHTML = 'Start'
+  }
+  speedOption.value = wpm
 }
 
 textarea.addEventListener('click', (e) => {
@@ -55,11 +65,29 @@ resetButton.addEventListener('click', (e) => {
   start()
 })
 
+speedOption.addEventListener('click', (e) => {
+  e.stopPropagation();
+})
+
+speedOption.addEventListener('change', (e) => {
+  wpm = parseInt(speedOption.value)
+  saveSettings()
+})
+
+textarea.addEventListener('change', (e) => {
+  cur = 0
+  render()
+})
+textarea.addEventListener('keyup', (e) => {
+  cur = 0
+  render()
+})
+
 document.body.addEventListener('click', () => {
   if (running) {
     stop()
   } else {
-    start()
+    // start()
   }
 })
 
@@ -67,12 +95,16 @@ const reset = () => {
   cur = 0
 }
 
-const start = () => {
+const loadText = () => {
   words = textarea.value
     .split(/\n\n+/g).filter(Boolean).join(' ' + PARAGRAPH_BREAK + ' ')
     .replace(/([.!?"“”]) /g, '$1 ' + SENTENCE_BREAK + ' ')
     .replace(/SENTENCE_BREAK PARAGRAPH_BREAK/g, 'PARAGRAPH_BREAK')
     .split(/\s+/g).filter(Boolean)
+}
+
+const start = () => {
+  loadText()
   if (cur >= words.length) {
     reset()
   }
@@ -109,7 +141,7 @@ const next = () => {
       if (word_to_add === undefined || word.length + word_to_add.length > 8 || ENDS.test(word) || STARTS.test(word_to_add)) {
         break;
       }
-      if (words[cur + i].length <= 3 && words[cur + i + 1] && words[cur + i + 1].length > 3) {
+      if (words[cur + i].length <= 3 && words[cur + i + 1] && words[cur + i + 1].length > 4) {
         break;
       }
       word += ' ' + word_to_add
@@ -124,7 +156,7 @@ const next = () => {
     multiplier = 2
   } else if (word === SENTENCE_BREAK) {
     word = ''
-    multiplier = 0.7
+    multiplier = 1
   }
   // else if (MAJOR_BREAK.test(word) && words[cur + 1] !== PARAGRAPH_BREAK) {
   //   multiplier = 2
