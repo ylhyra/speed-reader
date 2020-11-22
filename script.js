@@ -1,0 +1,125 @@
+const startButton = document.getElementById('start')
+const resetButton = document.getElementById('reset')
+const textarea = document.getElementById('textarea')
+const output = document.getElementById('output')
+const status = document.getElementById('status')
+let timer;
+let words = [];
+let cur = 0;
+// let wpm = 300;
+let wpm = 170;
+let average_word_length = 6;
+let MAJOR_BREAK = /[.!?"“”]$/
+let MINOR_BREAK = /[,;:]$/
+let ENDS = /[.!?"“”,;:«»]$/
+let STARTS = /^[-–—«»"“”]/
+let running = false
+
+
+
+const saveText = () => {
+  localStorage.setItem("text", textarea.value)
+  saveSettings()
+}
+const saveSettings = () => {
+  localStorage.setItem("cur", cur)
+  render()
+}
+const loadSettings = () => {
+  textarea.value = localStorage.getItem("text") || ''
+  if (localStorage.getItem("cur")) {
+    cur = parseInt(localStorage.getItem("cur"))
+  }
+  render()
+}
+const render = () => {
+  if (words.length > 0) {
+    status.style.width = `${(cur/words.length*100)}%`
+  }
+}
+
+textarea.addEventListener('click', (e) => {
+  e.stopPropagation();
+})
+
+startButton.addEventListener('click', (e) => {
+  e.stopPropagation();
+  start()
+})
+
+resetButton.addEventListener('click', (e) => {
+  e.stopPropagation();
+  reset()
+  start()
+})
+
+document.body.addEventListener('click', () => {
+  if (running) {
+    stop()
+  } else {
+    start()
+  }
+})
+
+const reset = () => {
+  cur = 0
+}
+
+const start = () => {
+  words = textarea.value.split(/\s+/g).filter(Boolean)
+  if (cur >= words.length) {
+    reset()
+  }
+  running = true
+  saveText()
+  timeoutAndNext()
+  document.body.classList.add('running')
+}
+
+const stop = () => {
+  running = false
+  timer && clearTimeout(timer)
+  document.body.classList.remove('running')
+}
+
+const timeoutAndNext = (multiplier, add) => {
+  let ms = (multiplier || 1) * (60 * 1 / wpm) * 1000
+  // ms += add || 0
+  timer && clearTimeout(timer)
+  timer = setTimeout(() => next(), ms)
+}
+
+const next = () => {
+  console.log(cur)
+  if (cur >= words.length) {
+    return stop()
+  }
+  let word = words[cur]
+  for (let i = 1; word.length < 9 && cur + i < words.length; i++) {
+    let word_to_add = words[cur + i]
+    if (word_to_add === undefined || word.length + word_to_add.length > 8 || ENDS.test(word) || STARTS.test(word_to_add)) {
+      break;
+    }
+    if (words[cur + i].length <= 3 && words[cur + i + 1] && words[cur + i + 1].length > 3) {
+      break;
+    }
+    word += ' ' + word_to_add
+  }
+  let multiplier = clamp(Math.cbrt(word.length / average_word_length), 0.7, 1.3)
+  output.innerHTML = '&nbsp;'.repeat(Math.max(0, (word.length - 4) / 0.8)) + word
+  cur = cur + word.split(' ').length
+  let add = 0
+  if (MAJOR_BREAK.test(word)) {
+    multiplier = 2
+  } else if (MINOR_BREAK.test(word)) {
+    multiplier = 1.4
+  }
+  timeoutAndNext(multiplier, add)
+  saveSettings()
+}
+
+const clamp = function (input, min, max) {
+  return Math.min(Math.max(input, min), max);
+};
+
+loadSettings()

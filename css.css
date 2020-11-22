@@ -1,0 +1,40 @@
+body {
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #fffced;
+  background: #fac58e;
+  font-family: Georgia;
+
+  background: black;
+}
+body.running #setup {
+  display: none;
+}
+/* body:not(.running) #output {
+  display: none;
+} */
+
+#output {
+  /* background: #fffced; */
+  font-size: 26px;
+  text-align: center;
+  margin: auto;
+  padding: 5px 10px;
+  max-width: 400px;
+  min-width: 400px;
+
+  color:#ffef5b;
+}
+
+#status {
+  color: white;
+  background: #b9dbf6;
+  height: 2px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
