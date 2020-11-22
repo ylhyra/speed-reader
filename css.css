@@ -10,12 +10,12 @@ body {
 
   background: black;
 }
+body.running  {
+  cursor:pointer;
+}
 body.running #setup {
   display: none;
 }
-/* body:not(.running) #output {
-  display: none;
-} */
 
 #output {
   /* background: #fffced; */

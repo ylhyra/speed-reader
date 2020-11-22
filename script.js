@@ -14,7 +14,7 @@ let MINOR_BREAK = /[,;:]$/
 let ENDS = /[.!?"“”,;:«»]$/
 let STARTS = /^[-–—«»"“”]/
 let running = false
-
+const PARAGRAPH_BREAK = 'PARAGRAPH_BREAK'
 
 
 const saveText = () => {
@@ -66,13 +66,15 @@ const reset = () => {
 }
 
 const start = () => {
-  words = textarea.value.split(/\s+/g).filter(Boolean)
+  words = textarea.value
+    .split(/\n\n+/g).filter(Boolean).join(' ' + PARAGRAPH_BREAK + ' ')
+    .split(/\s+/g).filter(Boolean)
   if (cur >= words.length) {
     reset()
   }
   running = true
   saveText()
-  timeoutAndNext()
+  next()
   document.body.classList.add('running')
 }
 
@@ -90,30 +92,38 @@ const timeoutAndNext = (multiplier, add) => {
 }
 
 const next = () => {
-  console.log(cur)
-  if (cur >= words.length) {
+  if (!document.hasFocus() ||cur >= words.length) {
     return stop()
   }
   let word = words[cur]
-  for (let i = 1; word.length < 9 && cur + i < words.length; i++) {
-    let word_to_add = words[cur + i]
-    if (word_to_add === undefined || word.length + word_to_add.length > 8 || ENDS.test(word) || STARTS.test(word_to_add)) {
-      break;
+  if (word !== PARAGRAPH_BREAK) {
+    for (let i = 1; word.length < 9 && cur + i < words.length; i++) {
+      let word_to_add = words[cur + i]
+      if (word_to_add === PARAGRAPH_BREAK) {
+        break;
+      }
+      if (word_to_add === undefined || word.length + word_to_add.length > 8 || ENDS.test(word) || STARTS.test(word_to_add)) {
+        break;
+      }
+      if (words[cur + i].length <= 3 && words[cur + i + 1] && words[cur + i + 1].length > 3) {
+        break;
+      }
+      word += ' ' + word_to_add
     }
-    if (words[cur + i].length <= 3 && words[cur + i + 1] && words[cur + i + 1].length > 3) {
-      break;
-    }
-    word += ' ' + word_to_add
   }
+  // console.log(word)
   let multiplier = clamp(Math.cbrt(word.length / average_word_length), 0.7, 1.3)
-  output.innerHTML = '&nbsp;'.repeat(Math.max(0, (word.length - 4) / 0.8)) + word
   cur = cur + word.split(' ').length
   let add = 0
-  if (MAJOR_BREAK.test(word)) {
+  if (word === PARAGRAPH_BREAK) {
+    word = ''
+    multiplier = 2
+  } else if (MAJOR_BREAK.test(word) && words[cur +1]!==PARAGRAPH_BREAK) {
     multiplier = 2
   } else if (MINOR_BREAK.test(word)) {
     multiplier = 1.4
   }
+  output.innerHTML = '&nbsp;'.repeat(Math.max(0, (word.length - 4) / 0.8)) + word
   timeoutAndNext(multiplier, add)
   saveSettings()
 }
