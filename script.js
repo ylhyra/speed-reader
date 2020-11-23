@@ -54,7 +54,7 @@ const render = () => {
   }
   speedOption.value = wpm
   skinOption.value = skin
-  document.body.setAttribute('data-skin',skin)
+  document.body.setAttribute('data-skin', skin)
 }
 
 textarea.addEventListener('click', (e) => {
