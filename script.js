@@ -18,7 +18,7 @@ let STARTS = /^[-–—«»"“”]/
 let running = false
 const PARAGRAPH_BREAK = 'PARAGRAPH_BREAK'
 const SENTENCE_BREAK = 'SENTENCE_BREAK'
-let skin = 'yellowonblack'
+let skin = 'blackoncream'
 
 const saveText = () => {
   localStorage.setItem("text", textarea.value)

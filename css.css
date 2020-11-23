@@ -5,8 +5,6 @@ body {
   justify-content: center;
   min-height: 100vh;
   font-family: Georgia;
-  color: white;
-  background: black;
   padding: 5px;
 }
 
@@ -24,19 +22,26 @@ textarea {
   font-family: sans-serif;
 }
 
+h1 {
+  font-weight: normal;
+  margin-bottom: 50px;
+  text-align: center;
+  font-size: 26px;
+}
+h1 span {
+  border-bottom: 1px solid rgba(134, 134, 134,.3);
+}
+
 main {
-  /* width: 400px; */
   max-width: 400px;
   width: 100%;
 }
 
 #output {
-  /* background: #fffced; */
   font-size: 26px;
   text-align: center;
   margin: auto;
   padding: 5px 10px;
-  color: #ffef5b;
 }
 
 #status {
@@ -67,9 +72,19 @@ body[data-skin=blackoncream] #output {
 }
 
 body[data-skin=whiteonblack] {
+  color: white;
   background: black;
 }
 
 body[data-skin=whiteonblack] #output {
+  color: white;
+}
+
+body[data-skin=yellowonblack] {
+  color: white;
+  background: black;
+}
+
+body[data-skin=yellowonblack] #output {
   color: white;
 }
