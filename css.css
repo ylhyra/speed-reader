@@ -4,11 +4,10 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #fffced;
-  background: #fac58e;
   font-family: Georgia;
   color: white;
   background: black;
+  padding: 5px;
 }
 
 body.running {
@@ -25,14 +24,18 @@ textarea {
   font-family: sans-serif;
 }
 
+main {
+  /* width: 400px; */
+  max-width: 400px;
+  width: 100%;
+}
+
 #output {
   /* background: #fffced; */
   font-size: 26px;
   text-align: center;
   margin: auto;
   padding: 5px 10px;
-  max-width: 400px;
-  width: 100%;
   color: #ffef5b;
 }
 

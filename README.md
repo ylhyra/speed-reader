@@ -7,6 +7,7 @@ A simple browser-based speed reader. Functionality includes:
 * Pauses after commas and periods.
 * Long pauses after paragraphs.
 * Shorter display time for short words.
+* State is saved
 
 Use it online [here](https://speedreader.ylhyra.is/).
 
