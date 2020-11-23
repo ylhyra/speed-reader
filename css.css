@@ -1,18 +1,18 @@
 body {
   background: black;
   display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: 100vh;
+  justify-content: center;
   font-family: Georgia;
   padding: 5px;
 }
 
-body.running {
+body[data-running] {
+  align-items: center;
   cursor: none;
 }
 
-body.running #setup {
+body[data-running] #setup {
   display: none;
 }
 
@@ -28,8 +28,9 @@ h1 {
   text-align: center;
   font-size: 26px;
 }
+
 h1 span {
-  border-bottom: 1px solid rgba(134, 134, 134,.3);
+  border-bottom: 1px solid rgba(134, 134, 134, .3);
 }
 
 main {

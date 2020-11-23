@@ -123,13 +123,12 @@ const start = () => {
   running = true
   saveText()
   next()
-  document.body.classList.add('running')
 }
 
 const stop = () => {
   running = false
   timer && clearTimeout(timer)
-  document.body.classList.remove('running')
+  document.body.removeAttribute('data-running')
 }
 
 const timeoutAndNext = (multiplier, add) => {
@@ -140,7 +139,7 @@ const timeoutAndNext = (multiplier, add) => {
 }
 
 const next = () => {
-  document.body.setAttribute('class','running')
+  document.body.setAttribute('data-running','true')
 
   if (!document.hasFocus() || cur >= words.length) {
     return stop()
