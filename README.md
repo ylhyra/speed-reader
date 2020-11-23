@@ -1,6 +1,6 @@
 # Speed reader 📖
 
-A simple browser-based speed reader. Includes functionality not seen in most speed readers:
+A simple browser-based speed reader. Functionality includes:
 
 * Light on dark skin
 * Text is displayed full screen
