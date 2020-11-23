@@ -49,7 +49,7 @@ const render = () => {
     status.style.width = `${(cur/words.length*100)}%`
     startButton.innerHTML = `Continue (${Math.floor(cur/words.length*100)}%)`
   }
-  if (cur == 0 || cur + 1 == words.length) {
+  if (cur == 0 || cur  == words.length) {
     startButton.innerHTML = 'Start'
   }
   speedOption.value = wpm
