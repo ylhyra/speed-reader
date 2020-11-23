@@ -49,7 +49,7 @@ const render = () => {
     status.style.width = `${(cur/words.length*100)}%`
     startButton.innerHTML = `Continue (${Math.floor(cur/words.length*100)}%)`
   }
-  if (cur == 0 || cur + 1 == word.length) {
+  if (cur == 0 || cur + 1 == words.length) {
     startButton.innerHTML = 'Start'
   }
   speedOption.value = wpm
@@ -140,6 +140,8 @@ const timeoutAndNext = (multiplier, add) => {
 }
 
 const next = () => {
+  document.body.setAttribute('class','running')
+
   if (!document.hasFocus() || cur >= words.length) {
     return stop()
   }
