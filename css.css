@@ -1,10 +1,11 @@
 body {
-  background: black;
   display: flex;
   min-height: 100vh;
   justify-content: center;
   font-family: Georgia;
   padding: 5px;
+  box-sizing: border-box;
+  margin: 0;
 }
 
 body[data-running] {

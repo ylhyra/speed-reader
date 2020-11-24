@@ -44,6 +44,7 @@ const loadSettings = () => {
   loadText()
   render()
 }
+
 const render = () => {
   if (words.length > 0) {
     status.style.width = `${(cur/words.length*100)}%`
@@ -185,5 +186,4 @@ const next = () => {
 const clamp = function (input, min, max) {
   return Math.min(Math.max(input, min), max);
 };
-
 loadSettings()
