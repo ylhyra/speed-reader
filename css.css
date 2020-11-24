@@ -41,9 +41,16 @@ main {
 
 #output {
   font-size: 26px;
-  text-align: center;
   margin: auto;
-  padding: 5px 10px;
+  padding: 10px 0;
+  max-width: inherit;
+}
+
+#output #word {
+  hyphens: auto;
+  max-width: inherit;
+  text-align: center;
+  flex: 1.2;
 }
 
 #status {

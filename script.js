@@ -50,7 +50,7 @@ const render = () => {
     status.style.width = `${(cur/words.length*100)}%`
     startButton.innerHTML = `Continue (${Math.floor(cur/words.length*100)}%)`
   }
-  if (cur == 0 || cur  == words.length) {
+  if (cur == 0 || cur == words.length) {
     startButton.innerHTML = 'Start'
   }
   speedOption.value = wpm
@@ -140,7 +140,7 @@ const timeoutAndNext = (multiplier, add) => {
 }
 
 const next = () => {
-  document.body.setAttribute('data-running','true')
+  document.body.setAttribute('data-running', 'true')
 
   if (!document.hasFocus() || cur >= words.length) {
     return stop()
@@ -162,7 +162,7 @@ const next = () => {
     }
   }
   // console.log(word)
-  let multiplier = clamp(Math.cbrt(word.length / average_word_length), 0.7, 1.3)
+  let multiplier = clamp(Math.cbrt(word.length / average_word_length), 0.7, 1.9)
   cur = cur + word.split(' ').length
   let add = 0
   if (word === PARAGRAPH_BREAK) {
@@ -178,7 +178,22 @@ const next = () => {
   else if (MINOR_BREAK.test(word)) {
     multiplier = 1.4
   }
-  output.innerHTML = '&nbsp;'.repeat(Math.max(0, (word.length - 4) / 0.8)) + word
+  // output.innerHTML = `<div id="spacer"></div>`
+  // + `<div id="word">${word}</div>`
+  output.innerHTML = `<span id="word" style="opacity:0">${word}</span>`
+  const outputWidth = output.getBoundingClientRect().width
+  const w = document.getElementById('word')
+  const wordWidth = w.getBoundingClientRect().width
+  let leftpad = (outputWidth - wordWidth * 0.4) / 2 - 10
+  if (wordWidth >= leftpad / 2) {
+    leftpad = Math.min(leftpad, (outputWidth - wordWidth))
+  }
+  w.setAttribute('style', `display:block;width:${Math.ceil(wordWidth)}px;margin-left:${Math.floor(Math.max(0,leftpad))}px`)
+  console.log({
+    outputWidth,
+    wordWidth,
+    leftpad,
+  })
   timeoutAndNext(multiplier, add)
   saveSettings()
 }
