@@ -102,6 +102,7 @@ document.body.addEventListener('mousemove', () => {
 
 document.body.addEventListener('keydown', (e) => {
   if (e.keyCode === 32) {
+    e.preventDefault()
     if (running) {
       stop()
     } else {

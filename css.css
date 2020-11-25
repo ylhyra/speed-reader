@@ -108,7 +108,7 @@ body[data-skin=yellowonblack] {
 }
 
 body[data-skin=yellowonblack] #output {
-  color: white;
+  color: #ffdb41;
 }
 
 #tutorial {
