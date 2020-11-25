@@ -20,6 +20,9 @@ const PARAGRAPH_BREAK = 'PARAGRAPH_BREAK'
 const SENTENCE_BREAK = 'SENTENCE_BREAK'
 let skin = 'blackoncream'
 
+/*
+  Data
+*/
 const saveText = () => {
   localStorage.setItem("text", textarea.value)
   saveSettings()
@@ -45,30 +48,15 @@ const loadSettings = () => {
   render()
 }
 
-const render = () => {
-  if (words.length > 0) {
-    status.style.width = `${(cur/words.length*100)}%`
-    startButton.innerHTML = `Continue (${Math.floor(cur/words.length*100)}%)`
-  }
-  if (cur == 0 || cur == words.length) {
-    startButton.innerHTML = 'Start'
-  }
-  speedOption.value = wpm
-  skinOption.value = skin
-  document.body.setAttribute('data-skin', skin)
-}
-
-textarea.addEventListener('click', (e) => {
-  e.stopPropagation();
-})
+/*
+  Event listeners
+*/
 
 startButton.addEventListener('click', (e) => {
-  e.stopPropagation();
   start()
 })
 
 resetButton.addEventListener('click', (e) => {
-  e.stopPropagation();
   reset()
   start()
 })
@@ -76,10 +64,6 @@ resetButton.addEventListener('click', (e) => {
 skinOption.addEventListener('change', (e) => {
   skin = skinOption.value
   saveSettings()
-})
-
-speedOption.addEventListener('click', (e) => {
-  e.stopPropagation();
 })
 
 speedOption.addEventListener('change', (e) => {
@@ -95,14 +79,106 @@ textarea.addEventListener('keyup', (e) => {
   cur = 0
   render()
 })
+textarea.addEventListener('keydown', (e) => {
+  e.stopPropagation();
+})
+
+document.getElementById('setup').addEventListener('click', (e) => {
+  e.stopPropagation();
+})
+// document.getElementById('setup').addEventListener('keydown', (e) => {
+//   e.stopPropagation();
+// })
+let mouseTimer;
+document.body.addEventListener('mousemove', () => {
+  if (running) {
+    mouseTimer && clearTimeout(mouseTimer)
+    document.body.setAttribute('data-showcursor', 'true')
+    mouseTimer = setTimeout(() => {
+      document.body.removeAttribute('data-showcursor')
+    }, 700)
+  }
+})
+
+document.body.addEventListener('keydown', (e) => {
+  if (e.keyCode === 32) {
+    if (running) {
+      stop()
+    } else {
+      start()
+    }
+  }
+  /* Left */
+  else if (e.keyCode === 37) {
+    for (let i = cur - 20; i >= 0; i--) {
+      if (words[i] === PARAGRAPH_BREAK || words[i] === SENTENCE_BREAK || i === 0) {
+        cur = i + 1;
+        next()
+        break;
+      }
+    }
+  }
+  /* Right */
+  else if (e.keyCode === 39) {
+    for (let i = cur + 1; i < words.length; i++) {
+      if (words[i] === PARAGRAPH_BREAK || words[i] === SENTENCE_BREAK) {
+        cur = i + 1;
+        next()
+        break;
+      }
+    }
+  }
+  /* Up */
+  else if (e.keyCode === 38 && wpm < 1000) {
+    wpm += 25
+    render()
+    // wpm = wpm * 1.03 + 5
+    // wpm = Math.round(wpm / 5) * 5
+  }
+  /* Down */
+  else if (e.keyCode === 40 && wpm > 25) {
+    wpm -= 25
+    render()
+    // wpm = wpm / 1.03 - 5
+    // wpm = Math.round(wpm / 5) * 5
+  }
+})
 
 document.body.addEventListener('click', () => {
   if (running) {
     stop()
   } else {
-    // start()
+    start()
   }
 })
+
+
+/*
+  Functionality
+*/
+const render = () => {
+  if (words.length > 0) {
+    status.style.width = `${(cur/words.length*100)}%`
+    startButton.innerHTML = `Continue (${Math.floor(cur/words.length*100)}%)`
+  }
+  if (cur == 0 || cur == words.length) {
+    startButton.innerHTML = 'Start'
+  }
+  // speedOption.value = wpm
+  let available_speeds = []
+  for (let i = 75; i <= 600; i += 25) {
+    available_speeds.push(i)
+  }
+  if (!available_speeds.includes(wpm)) {
+    available_speeds.push(wpm)
+    available_speeds = available_speeds.sort((a, b) => a - b)
+  }
+  speedOption.innerHTML = available_speeds.map(j =>
+    `<option value="${j}" ${j===wpm?'selected':''}>${j} wpm</option>`
+  ).join('')
+  skinOption.value = skin
+  document.body.setAttribute('data-skin', skin)
+}
 
 const reset = () => {
   cur = 0
@@ -117,6 +193,7 @@ const loadText = () => {
 }
 
 const start = () => {
+  console.log(`Will take ${(words.length / wpm).toFixed(1)} minutes`)
   loadText()
   if (cur >= words.length) {
     reset()
@@ -162,7 +239,15 @@ const next = () => {
     }
   }
   // console.log(word)
-  let multiplier = clamp(Math.cbrt(word.length / average_word_length), 0.7, 1.9)
+  const minMultiplier = 0.65
+  // const maxMultiplier = 1.5
+  // const longestWord = 12
+  let multiplier = minMultiplier + (1 - minMultiplier) * (word.length / average_word_length)
+  if (multiplier > 1) {
+    multiplier = multiplier ** 1.4
+  }
+  multiplier = clamp(multiplier, minMultiplier, 1.8)
+  // console.log({ word, multiplier })
   cur = cur + word.split(' ').length
   let add = 0
   if (word === PARAGRAPH_BREAK) {
@@ -184,16 +269,16 @@ const next = () => {
   const outputWidth = output.getBoundingClientRect().width
   const w = document.getElementById('word')
   const wordWidth = w.getBoundingClientRect().width
-  let leftpad = (outputWidth - wordWidth * 0.4) / 2 - 10
+  let leftpad = (outputWidth - wordWidth * 0.6) / 2 - 10
   if (wordWidth >= leftpad / 2) {
     leftpad = Math.min(leftpad, (outputWidth - wordWidth))
   }
   w.setAttribute('style', `display:block;width:${Math.ceil(wordWidth)}px;margin-left:${Math.floor(Math.max(0,leftpad))}px`)
-  console.log({
-    outputWidth,
-    wordWidth,
-    leftpad,
-  })
+  // console.log({
+  //   outputWidth,
+  //   wordWidth,
+  //   leftpad,
+  // })
   timeoutAndNext(multiplier, add)
   saveSettings()
 }
