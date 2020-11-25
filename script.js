@@ -110,9 +110,13 @@ document.body.addEventListener('keydown', (e) => {
   }
   /* Left */
   else if (e.keyCode === 37) {
-    for (let i = cur - 20; i >= 0; i--) {
+    for (let i = Math.max(0, cur - 20); i >= 0; i--) {
       if (words[i] === PARAGRAPH_BREAK || words[i] === SENTENCE_BREAK || i === 0) {
-        cur = i + 1;
+        if(i === 0){
+          cur = i;
+        } else {
+          cur = i + 1;
+        }
         next()
         break;
       }
