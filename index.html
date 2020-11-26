@@ -13,29 +13,29 @@
   <main>
     <div id=setup>
       <h1><span>Speed reader</span></h1>
-      <textarea id=textarea placeholder="Write text..."></textarea>
-      <div>
-        <label for="wpm">Speed:</label>
-        <select id=wpm></select>
-        <span id=time class="gray"></span>
-      </div>
-      <div>
-        <label for="skin">Colors:</label>
-        <select id=skin>
+      <div id=noclick>
+        <textarea id=textarea placeholder="Write text..."></textarea>
+        <div>
+          <label for="wpm">Speed:</label>
+          <select id=wpm></select>
+          <span id=time class="gray"></span>
+        </div>
+        <div>
+          <label for="skin">Colors:</label>
+          <select id=skin>
           <option value="blackonwhite">Black on white</option>
           <option value="blackoncream" selected>Black on light</option>
           <option value="whiteonblack">White on black</option>
           <option value="yellowonblack">Yellow on black</option>
         </select>
-      </div>
-      <div>
-        <button id="start">Start</button>
-        <button id="reset">Restart</button>
-      </div>
-      <div id=tutorial class="gray">
-        Click "space" to pause and start, <br/>
-        "left" and "right" arrow buttons to go backwards and forwards,<br/>
-        "up" and "down" arrow buttons to change speed.
+        </div>
+        <div>
+          <button id="start">Start</button>
+          <button id="reset">Restart</button>
+        </div>
+        <div id=tutorial class="gray">
+          Click "space" to pause and start, <br/> "left" and "right" arrow buttons to go backwards and forwards,<br/> "up" and "down" arrow buttons to change speed.
+        </div>
       </div>
     </div>
     <div id=output></div>

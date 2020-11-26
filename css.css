@@ -29,8 +29,9 @@ textarea {
 }
 
 h1 {
-  font-weight: normal;
+  /* font-weight: normal; */
   margin-bottom: 50px;
+  font-family: sans-serif;
   text-align: center;
   font-size: 26px;
 }
@@ -120,6 +121,6 @@ body[data-skin=yellowonblack] #output {
   font-size: 13px;
 }
 
-#setup {
+#noclick {
   cursor: initial;
 }

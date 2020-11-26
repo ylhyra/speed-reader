@@ -8,6 +8,7 @@ const status = document.getElementById('status')
 let timer;
 let words = [];
 let cur = 0;
+let last_cur = 0;
 // let wpm = 300;
 let wpm = 200;
 let average_word_length = 6;
@@ -85,7 +86,7 @@ textarea.addEventListener('keydown', (e) => {
   e.stopPropagation();
 })
 
-document.getElementById('setup').addEventListener('click', (e) => {
+document.getElementById('noclick').addEventListener('click', (e) => {
   e.stopPropagation();
 })
 // document.getElementById('setup').addEventListener('keydown', (e) => {
@@ -211,6 +212,7 @@ const start = () => {
     reset()
   }
   running = true
+  cur = last_cur /* Go one back to start on the same word */
   saveText()
   next(150)
 }
@@ -260,6 +262,7 @@ const next = (add) => {
   }
   multiplier = clamp(multiplier, minMultiplier, 1.8)
   // console.log({ word, multiplier })
+  last_cur = cur
   cur = cur + word.split(' ').length
   if (word === PARAGRAPH_BREAK) {
     word = ''
