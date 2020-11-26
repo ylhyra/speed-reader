@@ -72,11 +72,13 @@ speedOption.addEventListener('change', (e) => {
 })
 
 textarea.addEventListener('change', (e) => {
-  cur = 0
+  // cur = 0
+  loadText()
   render()
 })
 textarea.addEventListener('keyup', (e) => {
-  cur = 0
+  // cur = 0
+  loadText()
   render()
 })
 textarea.addEventListener('keydown', (e) => {
@@ -111,14 +113,15 @@ document.body.addEventListener('keydown', (e) => {
   }
   /* Left */
   else if (e.keyCode === 37) {
+    // Math.ceil(5 * wpm / 60)
     for (let i = Math.max(0, cur - 20); i >= 0; i--) {
       if (words[i] === PARAGRAPH_BREAK || words[i] === SENTENCE_BREAK || i === 0) {
-        if(i === 0){
+        if (i === 0) {
           cur = i;
         } else {
           cur = i + 1;
         }
-        next()
+        next(200)
         break;
       }
     }
@@ -128,7 +131,7 @@ document.body.addEventListener('keydown', (e) => {
     for (let i = cur + 1; i < words.length; i++) {
       if (words[i] === PARAGRAPH_BREAK || words[i] === SENTENCE_BREAK) {
         cur = i + 1;
-        next()
+        next(200)
         break;
       }
     }
@@ -169,7 +172,12 @@ const render = () => {
   if (cur == 0 || cur == words.length) {
     startButton.innerHTML = 'Start'
   }
-  // speedOption.value = wpm
+  skinOption.value = skin
+  document.body.setAttribute('data-skin', skin)
+  let time = (words.length / wpm)
+  document.getElementById('time').innerHTML = `(${(words.length / wpm).toFixed(1)} minutes)`
+
+  /* Render WPM dropdown */
   let available_speeds = []
   for (let i = 75; i <= 600; i += 25) {
     available_speeds.push(i)
@@ -179,10 +187,8 @@ const render = () => {
     available_speeds = available_speeds.sort((a, b) => a - b)
   }
   speedOption.innerHTML = available_speeds.map(j =>
-    `<option value="${j}" ${j===wpm?'selected':''}>${j} wpm</option>`
+    `<option value="${j}" ${j===wpm?'selected':''}>${j} words per minute</option>`
   ).join('')
-  skinOption.value = skin
-  document.body.setAttribute('data-skin', skin)
 }
 
 const reset = () => {
@@ -192,20 +198,21 @@ const reset = () => {
 const loadText = () => {
   words = textarea.value
     .split(/\n\n+/g).filter(Boolean).join(' ' + PARAGRAPH_BREAK + ' ')
+    .replace(/ ([-–—]) /g, ' $1&nbsp;')
     .replace(/([.!?"“”]) /g, '$1 ' + SENTENCE_BREAK + ' ')
     .replace(/SENTENCE_BREAK PARAGRAPH_BREAK/g, 'PARAGRAPH_BREAK')
     .split(/\s+/g).filter(Boolean)
+    .map(i => i.replace(/&nbsp;/g, '\u00A0'))
 }
 
 const start = () => {
-  console.log(`Will take ${(words.length / wpm).toFixed(1)} minutes`)
   loadText()
   if (cur >= words.length) {
     reset()
   }
   running = true
   saveText()
-  next()
+  next(150)
 }
 
 const stop = () => {
@@ -216,12 +223,12 @@ const stop = () => {
 
 const timeoutAndNext = (multiplier, add) => {
   let ms = (multiplier || 1) * (60 * 1 / wpm) * 1000
-  // ms += add || 0
+  ms += add || 0
   timer && clearTimeout(timer)
   timer = setTimeout(() => next(), ms)
 }
 
-const next = () => {
+const next = (add) => {
   document.body.setAttribute('data-running', 'true')
 
   if (!document.hasFocus() || cur >= words.length) {
@@ -254,7 +261,6 @@ const next = () => {
   multiplier = clamp(multiplier, minMultiplier, 1.8)
   // console.log({ word, multiplier })
   cur = cur + word.split(' ').length
-  let add = 0
   if (word === PARAGRAPH_BREAK) {
     word = ''
     multiplier = 2

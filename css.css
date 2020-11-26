@@ -113,9 +113,11 @@ body[data-skin=yellowonblack] #output {
 
 #tutorial {
   padding: 10px 0;
+}
+.gray {
+  opacity: 0.7;
   font-family: sans-serif;
   font-size: 13px;
-  opacity: 0.7;
 }
 
 #setup {
