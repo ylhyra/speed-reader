@@ -29,7 +29,7 @@ const saveText = () => {
   saveSettings()
 }
 const saveSettings = () => {
-  localStorage.setItem("cur", cur)
+  localStorage.setItem("cur", last_cur)
   localStorage.setItem("wpm", wpm)
   localStorage.setItem("skin", skin)
   render()
@@ -38,6 +38,8 @@ const loadSettings = () => {
   textarea.value = localStorage.getItem("text") || ''
   if (localStorage.getItem("cur")) {
     cur = parseInt(localStorage.getItem("cur"))
+    last_cur = cur
+    goToLastSentence()
   }
   if (localStorage.getItem("wpm")) {
     wpm = parseInt(localStorage.getItem("wpm"))
@@ -114,18 +116,7 @@ document.body.addEventListener('keydown', (e) => {
   }
   /* Left */
   else if (e.keyCode === 37) {
-    // Math.ceil(5 * wpm / 60)
-    for (let i = Math.max(0, cur - 20); i >= 0; i--) {
-      if (words[i] === PARAGRAPH_BREAK || words[i] === SENTENCE_BREAK || i === 0) {
-        if (i === 0) {
-          cur = i;
-        } else {
-          cur = i + 1;
-        }
-        next(200)
-        break;
-      }
-    }
+    goToLastSentence()
   }
   /* Right */
   else if (e.keyCode === 39) {
@@ -162,6 +153,20 @@ document.body.addEventListener('click', () => {
 })
 
 
+const goToLastSentence = () => {
+  for (let i = Math.max(0, last_cur - 2); i >= 0; i--) {
+    if (words[i] === PARAGRAPH_BREAK || words[i] === SENTENCE_BREAK || i === 0) {
+      if (i === 0) {
+        cur = i;
+      } else {
+        cur = i + 1;
+      }
+      next(350)
+      break;
+    }
+  }
+}
+
 /*
   Functionality
 */
@@ -194,13 +199,15 @@ const render = () => {
 
 const reset = () => {
   cur = 0
+  last_cur = cur
 }
 
 const loadText = () => {
   words = textarea.value
     .split(/\n\n+/g).filter(Boolean).join(' ' + PARAGRAPH_BREAK + ' ')
-    .replace(/ ([-–—]) /g, ' $1&nbsp;')
-    .replace(/([.!?"“”]) /g, '$1 ' + SENTENCE_BREAK + ' ')
+    .replace(/ ([-–—%]) /g, ' $1&nbsp;')
+    .replace(/ ([^ ]+) \1 /g, ' $1 ' + SENTENCE_BREAK + ' $1 ') /* Same word twice in a row */
+    .replace(/([.!?"“”]) ([A-ZÁÍÓÚÞÑÖÐÉÜÇ])/g, '$1 ' + SENTENCE_BREAK + ' $2')
     .replace(/SENTENCE_BREAK PARAGRAPH_BREAK/g, 'PARAGRAPH_BREAK')
     .split(/\s+/g).filter(Boolean)
     .map(i => i.replace(/&nbsp;/g, '\u00A0'))
