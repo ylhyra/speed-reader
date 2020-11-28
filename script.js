@@ -185,7 +185,7 @@ const render = () => {
 
   /* Render WPM dropdown */
   let available_speeds = []
-  for (let i = 75; i <= 600; i += 25) {
+  for (let i = 25; i <= 600; i += 25) {
     available_speeds.push(i)
   }
   if (!available_speeds.includes(wpm)) {
